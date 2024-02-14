@@ -49,21 +49,6 @@
         <img src="image1.PNG" align="middle" width="400px"/>
         <figcaption align="middle">Edge of blue triangle for test 4</figcaption>
       </td>
-      <td>
-        <img src="images/image2.png" align="middle" width="400px"/>
-        <figcaption align="middle">Caption goes here.</figcaption>
-      </td>
-    </tr>
-    <br>
-    <tr>
-      <td>
-        <img src="images/image3.png" align="middle" width="400px"/>
-        <figcaption align="middle">Caption goes here.</figcaption>
-      </td>
-      <td>
-        <img src="images/image4.png" align="middle" width="400px"/>
-        <figcaption align="middle">Caption goes here.</figcaption>
-      </td>
     </tr>
   </table>
 </div>
@@ -73,6 +58,28 @@
 
   As we saw in Part 1, when we implement simple rasterization, we can get jagged edges such that they are not smooth and very pixelated. Supersampling is a very useful tool because we examine multiple samples for each pixel, thus being able to provide more information about the image. This is particularly important on the edges of the triangle, where there isn’t just one color dominating the area. After implementing supersampling, we should not expect such a jagged edge, but rather some lighter colored pixels that smooth out the border.
   My supersampling algorithm first made sure to modify the resize the buffers by the sample rate. Previously, we were just filling in a color for each pixel so simply having the size of product width and height was enough. Now, we want to collect more data per point, which is the sample rate. As for modifying the Task 1 rasterization algorithm, I looped through two nested loops of size square root of the sample rate inside the two nested loops that loops over each bounding box of triangles. I modified the current point we are iterating over by adding the fraction of how much of the squared root sample rate we’ve iterated over. Using the same normal vectors we did in the previous task, we take the dot product of the line vector from this point to each input point and its normal vector. If all three dot products are greater than or equal to zero, that means this point is in the triangle. This is very similar to Task 1. However, a key difference here is that we no longer directly fill the pixel with a color, but add this color information to the sample buffer. When resolving to the frame buffer, I pulled the resulting colors from the buffer for each point, summed their RGB values, and averaged it to choose the final color for that pixel. For filling the pixel, I used the code from the spec to fill in pixel color if the point is on screen.
+
+  <div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="image21.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Sample rate 1 for test 4</figcaption>
+      </td>
+      <td>
+        <img src="image22.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Sample rate 2 for test 4.</figcaption>
+      </td>
+    </tr>
+    <br>
+    <tr>
+      <td>
+        <img src="image23.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Sample rate 3 for test4.</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
 
 <h3 align="middle">Part 3: Transforms</h3>
 

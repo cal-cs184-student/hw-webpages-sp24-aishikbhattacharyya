@@ -25,7 +25,7 @@
 
 <h1 align="middle">CS 184/284A: Computer Graphics and Imaging, Spring 2024</h1>
 <h1 align="middle">Homework 1: Rasterizer</h1>
-<h2 align="middle">YOUR NAME</h2>
+<h2 align="middle">Aishik Bhattacharyya</h2>
 
 <br><br>
 
@@ -37,6 +37,8 @@
 <h2 align="middle">Section I: Rasterization</h2>
 
 <h3 align="middle">Part 1: Rasterizing single-color triangles</h3>
+
+Rasterization is a process in which we are given information such as vertices to determine what data represents pixels on the screen. When rasterizing a triangle, we are given 3 points with x, y coordinates and a color to fill the triangle with. These 3 points are given in no specific order, so we must locally order them to travel in a consistent direction. Else, the following math will not work as intended, because when we go on and do vector subtraction, differing orientation of the points will always result in inaccurate results. We find the tangent lines that are the sides of the triangle and also find the normal vector perpendicular to them. This information will allow us to calculate the bounds of our triangle, so our next step is to find which points are located within the triangle. Before we do that, we want to optimize the portion of the grid we loop over, we calculate the x and y minimum and maximum bounds of the provided coordinates. Otherwise, we’d be looping over parts of the grid with nothing that we do not care about and waste time. As we loop over each point in this grid, we add 0.5 to our current point coordinates to locate the center of the grid. To determine whether the current point is in our triangle, we take the dot product of the line vector between this current point and each of our three input points and the normal vectors we calculated earlier. If all these values are greater than or equal to zero, we can conclude that this point is indeed within the triangle. When this is the case, we color that pixel. My algorithm is no worse than one that checks each sample because I calculate the minimum and maximum values for each of the x and y axis. My for loop is bounded by these constraints.
 
 <p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
 

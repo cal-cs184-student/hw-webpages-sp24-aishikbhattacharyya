@@ -81,6 +81,8 @@
   </table>
 </div>
 
+  We are looking at the left corner of the red triangle. When the sample rate is equal to 1, only 1 sample is not enough to account for the abrupt decreasing color distribution from a sea of red. But, when we increase the sample rate to 4, we see the missing pixels now a light shade of red and better shows the picture. Yet, it isn’t “great.” In the lowest row, we see a row of pixels hanging on to the triangle by its right corner. This is not smooth and shows that even a sample of 4 isn’t enough. This part of the image is so sharp that only on the 16 samples version are all the images more connected, demonstrating that the more we sample, the better distribution of colors we get connecting all the pixels together because the algorithm has more information regarding its surroundings to fill in each pixel.
+
 <h3 align="middle">Part 3: Transforms</h3>
 
   I modified my cubeman to be jumping in the air with his legs up and hands pointing upwards. To move the legs up in the air I rotate the bottom half of his legs. And to show the hands pointing up, I scaled the quadrilateral and rotated, as well as rotating the upper half of the hand. One of the legs overlaps with the other legs and I thought this was cool because you usually don’t see both legs in real life when you jump in the air like this.

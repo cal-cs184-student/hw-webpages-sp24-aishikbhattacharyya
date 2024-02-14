@@ -87,6 +87,17 @@
 
   I modified my cubeman to be jumping in the air with his legs up and hands pointing upwards. To move the legs up in the air I rotate the bottom half of his legs. And to show the hands pointing up, I scaled the quadrilateral and rotated, as well as rotating the upper half of the hand. One of the legs overlaps with the other legs and I thought this was cool because you usually don’t see both legs in real life when you jump in the air like this.
 
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="image3.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Jumping cubeman</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
 <h2 align="middle">Section II: Sampling</h2>
 
 <h3 align="middle">Part 4: Barycentric coordinates</h3>
@@ -94,6 +105,20 @@
   Barycentric coordinates are a way we use to plot points within a triangle. The goal of the equation is to find three constant coefficients representing the weights, or pull, each input point has on the current point. All weights must add to 1. This helps us color in the triangle more complexly because the shade of color being used is no longer a constant and varies throughout the triangle. For our implementation, we use the code from Task 2 and add modifications. In order to find the barycentric coordinates, we want to solve a system. So we take the inverse of a matrix containing information on the x, y, and z coordination of the 3 input points. Then we follow the code from Task 2 to check whether or not the point is within the triangle. If it is, we calculate the barycentric coordinates by multiplying the inverse matrix with the point we’re on. We then take each coordinate and multiply it by the color of each point that was passed in.
   Let’s look at the bottom left corner of the triangle below. That corner is blue. So any point in that area of the triangle has a larger weight of that point, also giving it a larger weight of that point’s color, thus making it more and more blue as you go closer to it. The same logic applies at the other points. Now, in the middle, when it is equidistant from all three points, there is no longer one defining color, but rather a light mesh of all three colors.
 
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="image41.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Example triangle</figcaption>
+      </td>
+      <td>
+        <img src="image42.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Color wheel</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
 
 <h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
 

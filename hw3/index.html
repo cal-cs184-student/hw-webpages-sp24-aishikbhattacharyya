@@ -45,11 +45,11 @@ Calculating primitive intersection parts of the rendering pipeline is also impor
   <table style="width=100%">
     <tr>
 	<td>
-        <img src="CBEmpty.png" align="middle" width="400px"/>
+        <img src="CBempty.png" align="middle" width="400px"/>
         <figcaption align="middle">CBEmpty</figcaption>
       </td>
       <td>
-        <img src="CBSpheres.png" align="middle" width="400px"/>
+        <img src="CBspheres.png" align="middle" width="400px"/>
         <figcaption align="middle">CBSpheres</figcaption>
       </td>
     </tr>
@@ -57,28 +57,21 @@ Calculating primitive intersection parts of the rendering pipeline is also impor
 </div>
 
 
-<h3 align="middle">Part 2: Antialiasing triangles</h3>
+<h2 align="middle">Part II: Bounding Volume Hiearchy</h2>
+	
+The purpose of the BVH construction algorithm is to reorganize the geometry in question through bounding boxes and reduce the number of intersections to check for. First, given a list of primitives, we construct a bounding box and initialize a node containing this final result. Depending on how many primitives we traversed, we compare it to the inputted maximum leaf size to determine whether or not the node we created is a leaf node. If so, we modify the node’s start and end values to what we just looped over. The importance of this step is to check if the number of primitives is below a certain threshold where we can just perform intersection checks regularly. Then, if our number of primitives exceeds this value, we have an algorithm that will split spaces within the image to optimize the number of intersection checks required. This is super important for large, complex geometries. First, we want to find which axis to split on, or the one that gives us the most benefit. To do this I retrieved the extent of the bounding box previously calculated. From the extent vector, I selected the axis which had the greatest value. For the splitting point, I calculated the average of all the centroids within the bounding box I created and defined two new primitive iterators, which represent the left and right subsection I will recursively iterate. To determine which value gets put inside which iterator, I check whether each value of the centroid’s axis to split on is less than the average centroid’s axis to split. If so, it goes in the left vector, or else it goes into the right vector. I chose the mean because I could calculate it in the same loop as calculating the bounding box, which saves a lot of time. I valued time a lot in this case because the larger the geometries get, the more amplified inefficient algorithms show. Furthermore, the spec warned that there are some cases in which all primitives might lie on one side of the split point, there might be a segfault. In most cases, choosing the mean as a heuristic is safe, but not in all cases. To compensate for this, I check if any of the primitive vectors are empty, and, if so, based on it being left or right, I pop the front or back of the vector that’s not empty and push it onto the one that is empty. As a result, before we begin the recursive step, the size of each vector is at least one and will not lead to a segfault. Then, I create two new iterators that help assign the order of the left and right elements that’ll be used in the recursive step. When calling this method on the left side, we loop from the input start to our new iterator and, for the right side, we loop from the new iterator to the input end.
 
-  As we saw in Part 1, when we implement simple rasterization, we can get jagged edges such that they are not smooth and very pixelated. Supersampling is a very useful tool because we examine multiple samples for each pixel, thus being able to provide more information about the image. This is particularly important on the edges of the triangle, where there isn’t just one color dominating the area. After implementing supersampling, we should not expect such a jagged edge, but rather some lighter colored pixels that smooth out the border.  
-My supersampling algorithm first made sure to modify the resize the buffers by the sample rate. Previously, we were just filling in a color for each pixel so simply having the size of product width and height was enough. Now, we want to collect more data per point, which is the sample rate. As for modifying the Task 1 rasterization algorithm, I looped through two nested loops of size square root of the sample rate inside the two nested loops that loops over each bounding box of triangles. I modified the current point we are iterating over by adding the fraction of how much of the squared root sample rate we’ve iterated over. Using the same normal vectors we did in the previous task, we take the dot product of the line vector from this point to each input point and its normal vector. If all three dot products are greater than or equal to zero, that means this point is in the triangle. This is very similar to Task 1. However, a key difference here is that we no longer directly fill the pixel with a color, but add this color information to the sample buffer. When resolving to the frame buffer, I pulled the resulting colors from the buffer for each point, summed their RGB values, and averaged it to choose the final color for that pixel. For filling the pixel, I used the code from the spec to fill in pixel color if the point is on screen.
-
+Testing image rendering on images with and without BVH acceleration resulted in staggering results. First, I tested the maxplanck.dae image inside the meshedit folder. Without BVH acceleration, it took my computer a long time to run and produced an average speed of 0.0011 million rays per second. With BVH acceleration, it produced an average speed of 0.1158 million rays per second. The difference between this is 100x. This is a fairly complex geometry of a face-like sculpture. In a more advanced test case of a sculpture, I tested the CBlucy.dae image inside the sky folder. Here, without BVH acceleration, it took 0.0004 million rays per second, and with BVH acceleration, it took 0.2158 million rays per second. The difference between these is more than 700x. We can see that as geometries get more complex, the greater the time impact BVH accelerations have on rendering the image.
   <div align="middle">
   <table style="width=100%">
     <tr>
       <td>
-        <img src="image21.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">Sample rate 1 for test 4</figcaption>
+        <img src="max.png" align="middle" width="400px"/>
+        <figcaption align="middle">maxplanck.dae with BVH acceleration</figcaption>
       </td>
       <td>
-        <img src="image22.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">Sample rate 2 for test 4.</figcaption>
-      </td>
-    </tr>
-    <br>
-    <tr>
-      <td>
-        <img src="image23.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">Sample rate 3 for test4.</figcaption>
+        <img src="CBLucy.png" align="middle" width="400px"/>
+        <figcaption align="middle">CBLucy.png with BVH acceleration</figcaption>
       </td>
     </tr>
   </table>

@@ -77,7 +77,7 @@ Testing image rendering on images with and without BVH acceleration resulted in 
   </table>
 </div>
 
-<h3 align="middle">Part III: Direct Illumination</h3>
+<h2 align="middle">Part III: "Direct Illimination</h2>
 
 In direct lighting with uniform hemisphere sampling, we want to loop through the total number of samples to be taken, which is the product of the number of samples per area light source and the number of lights in the scene. Using a samplingHemisphere already created, we call a sample on that to get a random sample vector in the hemisphere. From that, we create a ray that has an origin of a hit point calculated in the given code and direction of the ray, calculated by transforming our random vector from object space to world space. We also set the ray’s beginning to EPS_F for numerical precision and prevent the ray from intersecting the surface it started from. Finally, we check for intersections using BVH acceleration and the ray we just created. If there is an intersection, we add to the running radiance total by multiplying the intersection’s emission, the sampled bsdf value of the passed in intersection, and the cosine of wi obtained from the previous bsdf sampling, and finally dividing by the pdf. This process uses a Monte Carlo estimator. After looping through the required number of samples, we normalize the total radiance and return. In direct lighting by importance sampling, we loop through each light within the scene and determine whether the light is a point source or not via SceneLight::is_delta_light(). If it is from a point source, then sample that light which returns a unit vector giving the sampled direction between the hit point and light source, the distance between the hit point in the unit vector’s direction, and probability density function in the unit vector’s direction. Just like in hemisphere sampling, we precalculated the hit point in the given code. With this information, we create a new ray with origin hit point and direction of the unit vector wi from the sample. We set its beginning to EPS_F for the same reason in the previous function and set its end to the difference of the distance and EPS_F to avoid intersecting the light with itself. If the light is behind the surface, then the cos of the wi unit vector is less than 0 and we don’t modify our output radiance. Else if it is not behind the surface and using the BVH acceleration the ray does not intersect, we use the same function used in the Monte Carlo estimator to update our radiance and move on to the next light. In the case where the light is not from a point source, we follow the same steps, but use the Monte Carlo estimator as a whole for number samples per area light source and add the normalized running total to the final radiance. Once we’ve looped over all the lights, we return the final radiance we’ve been adding to all along.
 
@@ -105,11 +105,6 @@ When we look above at our below renders, the render that uses lighting sampling 
         <figcaption align="middle">Direct Lighting with CBspheres_lambertian.dae</figcaption>
       </td>
     </tr>
-  </table>
-</div>
-	  <div align="middle">
-
- <table style="width=100%">
 	<tr align="center">
 <tr>
       <td>
@@ -132,7 +127,9 @@ When we look above at our below renders, the render that uses lighting sampling 
         <figcaption align="middle">light rays=64 sample rate=1</figcaption>
       </td>
 </tr>
-	 </div>
+	  </table>
+</div>
+
 
 
 <h3 align="middle">Part IV: Global Illumination</h3>

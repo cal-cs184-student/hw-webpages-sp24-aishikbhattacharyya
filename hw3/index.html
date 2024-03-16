@@ -134,29 +134,7 @@ When we look above at our below renders, the render that uses lighting sampling 
 </tr>
 
 
-<h2 align="middle">Section II: Sampling</h2>
-
-<h3 align="middle">Part 4: Barycentric coordinates</h3>
-
-  Barycentric coordinates are a way we use to plot points within a triangle. The goal of the equation is to find three constant coefficients representing the weights, or pull, each input point has on the current point. All weights must add to 1. This helps us color in the triangle more complexly because the shade of color being used is no longer a constant and varies throughout the triangle. For our implementation, we use the code from Task 2 and add modifications. In order to find the barycentric coordinates, we want to solve a system. So we take the inverse of a matrix containing information on the x, y, and z coordination of the 3 input points. Then we follow the code from Task 2 to check whether or not the point is within the triangle. If it is, we calculate the barycentric coordinates by multiplying the inverse matrix with the point we’re on. We then take each coordinate and multiply it by the color of each point that was passed in.
-  Let’s look at the bottom left corner of the triangle below. That corner is blue. So any point in that area of the triangle has a larger weight of that point, also giving it a larger weight of that point’s color, thus making it more and more blue as you go closer to it. The same logic applies at the other points. Now, in the middle, when it is equidistant from all three points, there is no longer one defining color, but rather a light mesh of all three colors.
-
-<div align="middle">
-  <table style="width=100%">
-    <tr>
-      <td>
-        <img src="image41.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">Example triangle</figcaption>
-      </td>
-      <td>
-        <img src="image42.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">Color wheel</figcaption>
-      </td>
-    </tr>
-  </table>
-</div>
-
-<h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
+<h3 align="middle">Part IV: Global Illumination</h3>
 
 	Pixel sampling is a process used to get the final color for each pixel within an image. We take the work from the previous task and add on to that. To perform texture mapping, you create two new Vector2D objects that contain the passed in texture variables. We take how we calculated barycentric weights in the previous problem and multiply that by our u and v vectors. We take this vector and pass it into one of the sampling methods. 
   Sample nearest works by scaling the texture coordinates by height and width, then rounding the coordinates and getting the texel value. In other words, we get the color that’s closest to the pixel. Sample bilinear works by doing the same procedure but on the four closest texels and lerping the resulting colors. We get the texel of the bottom left, bottom right, top left, and top right and horizontally lerp the to get the top and bottom and finally vertically lerp those two to get the final color.

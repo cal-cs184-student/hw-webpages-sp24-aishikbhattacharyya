@@ -164,32 +164,32 @@ When we look above at our below renders, the render that uses lighting sampling 
   </table>
 </div>
 
-<h3 align="middle">Part 6: "Level sampling" with mipmaps for texture mapping</h3>
+<h3 align="middle">Part V: "Level sampling" with mipmaps for texture mapping</h3>
 
-Level sampling is the process in which we use mipmapping levels in texture mapping to determine which texel we get. This takes advantage of computing information that is closer with detail and not so much for stuff that’s less relevant, or further. In order to get level, we calculate the log base 2 of the square root of the norms of du and dv with respect to x and y. To obtain these values, we take the inverse system logic from earlier and calculate dx and dy values by adding one to the x and y parameters in different steps and taking the dot product. Finally, we take these new values and dot product them by the u and v vectors that were inputted and subtract them to get the final du/dx, dv/dx, du/dy, dv/dy values.
-With regards to speed, pixel sampling is the fastest of the three. By only looking at one point and assigning a color, there is not much work involved. With regards to level sampling and number of samples per level, level sampling is faster because it does not need to look at multiple samples per pixel. With regards to memory usage, once, again, pixel sampling uses the least memory because you just need to store the point and color info. Level sampling has second most memory usage and number of samples per pixel is third because you begin to store more texture information and sample more points per pixel leading to storing significantly more info. With regards to antialiasing power, the number of samples per pixel provides the best results because of how it captures more samples per pixel, such as near edges, then it is level sampling, and finally pixel sampling is last because it is very basic. In conclusion, the number of samples per pixel takes more space and time, but gives us better results.
+To implement adaptive sampling, we concentrate samples in more difficult parts of the image. What we want to do is loop over the total samples to evaluate and keep track of which batch number we’re on and the s1 and s2 values used in s1 and s2. Everytime we loop, we sample from the grid sampler and add the origin to it so we can generate a ray from the camera after normalizing by the dimensions of the sample buffer. We set this ray’s depth to max_ray_depth because of Task 4 and, with this sample ray, we can calculate est_radiance_global_illumination to add to our running estimate. Finally, we update the s1 and s2 values based on the returned radiance vector result’s illumination. With all these updated values, we can now determine whether or not we want to keep evaluating. If the current batch we’re on is a multiple of the given samplesPerBatch, we calculate I. To calculate I, we calculate variance, which is 1(n-1) * (s2 - s1^2/n) and multiply it by 1.96 while dividing by the square root of the total number of items sampled so far. Finally, we calculate a bound which represents whether or not the pixel has converged. To get this bound, we multiply the mean of s1, which can be obtained by dividing s1 by the number of items sampled so far and multiplying it by the given maxTolerance. If I is less than or equal to bound, it’s safe to assume we’ve sampled enough and we stop the loop. Finally, we average our estimate vector, update the pixel in the sample buffer and update the count in the respective position in the sample count buffer.
 
+All images below have 2048 samples per pixel, 1 sample per light, 5 max ray depth.
 <div align="middle">
   <table style="width=100%">
     <tr>
       <td>
-        <img src="image61.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">L_ZERO and P_NEAREST.</figcaption>
+        <img src="bunny.png" align="middle" width="400px"/>
+        <figcaption align="middle">Bunny with adaptive sampling .</figcaption>
       </td>
       <td>
-        <img src="image62.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">L_ZERO and P_LINEAR</figcaption>
+        <img src="bunny_rate.png" align="middle" width="400px"/>
+        <figcaption align="middle">Bunny rate image with adaptive sampling</figcaption>
       </td>
     </tr>
     <br>
     <tr>
       <td>
-        <img src="image63.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">L_NEAREST and P_NEAREST</figcaption>
+        <img src="bench2.png" align="middle" width="400px"/>
+        <figcaption align="middle">Bench with adaptive sampling</figcaption>
       </td>
       <td>
-        <img src="image64.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">L_NEAREST and P_LINEAR</figcaption>
+        <img src="bench2_rate.png" align="middle" width="400px"/>
+        <figcaption align="middle">Bench rate image with adaptive sampling</figcaption>
       </td>
     </tr>
   </table>

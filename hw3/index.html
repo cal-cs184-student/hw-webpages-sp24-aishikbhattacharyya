@@ -163,6 +163,19 @@ With direct illumination, we can see that the ceiling is dark except for the lig
   </table>
 </div>
 
+Below are rendered views with the isAccumBounces setting set to false and true at various max ray depths. There are 1024 samples per pixle. In the 2nd and 3rd bounce of light, the scene gets much darker. At least in the 2nd bounce of the light, the bunny is still slightly white, but in the 3rd bounce of the light it’s fully dark and everything in the scene is darker, from the walls to the black light. It’s like if a dark gray filter covered the 2nd bounce of light to create the 3rd bounce of light. The color reflections also mostly start to disappear and the balls lose a lot of white reflection from the light.
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="accumfalsetrue.png" align="middle" width="400px"/>
+        <figcaption align="middle">m=0,1,2,3,4,5</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+	
 Below is the Russian Roulette sampling of CBbunny.dae with s=1024 and varying max ray depth.
 
 <div align="middle">

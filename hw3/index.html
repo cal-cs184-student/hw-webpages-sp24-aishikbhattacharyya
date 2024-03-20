@@ -136,6 +136,21 @@ When we look above at our below renders, the render that uses lighting sampling 
 
 The indirect lighting function starts by taking in the result of one_bounce_radiance to which the radiance of future bounces will be added. If isAccumBounces is set to true, this means that we will calculate the accumulated light up until the max ray depth. We sample from the bsdf at the inputted point of intersection and save the resulting wi of incident light direction and the pdf of the sampled incident light direction. We create a new ray with origin hit point and incident light direction in world space, which is calculated by multiplying wi and the matrix transforming it from object to world space. We set this new ray’s depth to 1 less than the input ray and set it’s minimum bound to EPS_F to prevent the ray from intersecting the surface it came from. We check to see if the cosine of wi is positive and whether or not there is an intersection using BVH acceleration with the new ray. If so, we use the formula from lecture and recursively call at_least_one_bounce_radiance with the new ray, new intersection, multiply it with the bsdf sample and the cosine of wi and divide it by the pdf and probability from Russian roulette. We take this result and add it to the running radiance total. Finally, when all our recursive calls our complete, we return the total radiance.
 
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="spheres_indirect2_1024.png" align="middle" width="400px"/>
+        <figcaption align="middle">CBspheres_lambertian with m=2 and s=1024</figcaption>
+      </td>
+      <td>
+        <img src="bunny_indirect2" align="middle" width="400px"/>
+        <figcaption align="middle">Bunny with m=2 and s=1024</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
 With direct illumination, we can see that the ceiling is dark except for the light, and there is high contrast in the spheres and each of the walls. Overall, this image doesn’t “blend” in together but there are very strict, sharp properties. WIth indirect illumination, the ceiling is light and the light is dark, the inverse of the direct example. All the colors in the scene blend together very seamlessly and the colors bounce everywhere. Both renders are with 1024 samples per pixel.
 <div align="middle">
   <table style="width=100%">

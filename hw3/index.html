@@ -134,37 +134,25 @@ When we look above at our below renders, the render that uses lighting sampling 
 
 <h3 align="middle">Part IV: Global Illumination</h3>
 
-	Pixel sampling is a process used to get the final color for each pixel within an image. We take the work from the previous task and add on to that. To perform texture mapping, you create two new Vector2D objects that contain the passed in texture variables. We take how we calculated barycentric weights in the previous problem and multiply that by our u and v vectors. We take this vector and pass it into one of the sampling methods. 
-  Sample nearest works by scaling the texture coordinates by height and width, then rounding the coordinates and getting the texel value. In other words, we get the color that’s closest to the pixel. Sample bilinear works by doing the same procedure but on the four closest texels and lerping the resulting colors. We get the texel of the bottom left, bottom right, top left, and top right and horizontally lerp the to get the top and bottom and finally vertically lerp those two to get the final color.
-  Below we compare nearest sampling with bilinear sampling for a sample rate of 1 and 16 for each. The top row shows that with a sample rate of 1, bilinear sampling outperforms nearest sampling. On the left, the colors are more stark and sharp--it has not done such a great job at taking into consideration colors around it. Even when we increase to a sample rate of 16, both images do significantly improve and the quality difference between the two also significantly decreases, bilinear sampling outperforms nearest sampling by still having a smoother blend of pixel colors. So we can see that there is a large difference between the two methods when there’s a stark contrast in colors with a low sample rate.
+The indirect lighting function starts by taking in the result of one_bounce_radiance to which the radiance of future bounces will be added. If isAccumBounces is set to true, this means that we will calculate the accumulated light up until the max ray depth. We sample from the bsdf at the inputted point of intersection and save the resulting wi of incident light direction and the pdf of the sampled incident light direction. We create a new ray with origin hit point and incident light direction in world space, which is calculated by multiplying wi and the matrix transforming it from object to world space. We set this new ray’s depth to 1 less than the input ray and set it’s minimum bound to EPS_F to prevent the ray from intersecting the surface it came from. We check to see if the cosine of wi is positive and whether or not there is an intersection using BVH acceleration with the new ray. If so, we use the formula from lecture and recursively call at_least_one_bounce_radiance with the new ray, new intersection, multiply it with the bsdf sample and the cosine of wi and divide it by the pdf and probability from Russian roulette. We take this result and add it to the running radiance total. Finally, when all our recursive calls our complete, we return the total radiance.
 
+With direct illumination, we can see that the ceiling is dark except for the light, and there is high contrast in the spheres and each of the walls. Overall, this image doesn’t “blend” in together but there are very strict, sharp properties. WIth indirect illumination, the ceiling is light and the light is dark, the inverse of the direct example. All the colors in the scene blend together very seamlessly and the colors bounce everywhere. Both renders are with 1024 samples per pixel.
 <div align="middle">
   <table style="width=100%">
     <tr>
       <td>
-        <img src="image51.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">Nearest sampling with sample rate=1</figcaption>
+        <img src="spheres_accum_m1direct.png" align="middle" width="400px"/>
+        <figcaption align="middle">Direct illumination</figcaption>
       </td>
       <td>
-        <img src="image52.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">Bilinear sampling with sample rate=1</figcaption>
-      </td>
-    </tr>
-    <br>
-    <tr>
-      <td>
-        <img src="image53.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">Nearest sampling with sample rate=1</figcaption>
-      </td>
-      <td>
-        <img src="image54.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">Bilinear sampling with sample rate=16</figcaption>
+        <img src="spheres_accum_m2indirect.png" align="middle" width="400px"/>
+        <figcaption align="middle">Indirect illumination</figcaption>
       </td>
     </tr>
   </table>
 </div>
 
-<h3 align="middle">Part V: "Level sampling" with mipmaps for texture mapping</h3>
+<h3 align="middle">Part V: Adaptive Sampling</h3>
 
 To implement adaptive sampling, we concentrate samples in more difficult parts of the image. What we want to do is loop over the total samples to evaluate and keep track of which batch number we’re on and the s1 and s2 values used in s1 and s2. Everytime we loop, we sample from the grid sampler and add the origin to it so we can generate a ray from the camera after normalizing by the dimensions of the sample buffer. We set this ray’s depth to max_ray_depth because of Task 4 and, with this sample ray, we can calculate est_radiance_global_illumination to add to our running estimate. Finally, we update the s1 and s2 values based on the returned radiance vector result’s illumination. With all these updated values, we can now determine whether or not we want to keep evaluating. If the current batch we’re on is a multiple of the given samplesPerBatch, we calculate I. To calculate I, we calculate variance, which is 1(n-1) * (s2 - s1^2/n) and multiply it by 1.96 while dividing by the square root of the total number of items sampled so far. Finally, we calculate a bound which represents whether or not the pixel has converged. To get this bound, we multiply the mean of s1, which can be obtained by dividing s1 by the number of items sampled so far and multiplying it by the given maxTolerance. If I is less than or equal to bound, it’s safe to assume we’ve sampled enough and we stop the loop. Finally, we average our estimate vector, update the pixel in the sample buffer and update the count in the respective position in the sample count buffer.
 

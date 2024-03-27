@@ -1,7 +1,202 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Homework 4 index.html here
-	</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>
+  body {
+    padding: 100px;
+    width: 1000px;
+    margin: auto;
+    text-align: left;
+    font-weight: 300;
+    font-family: 'Open Sans', sans-serif;
+    color: #121212;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Source Sans Pro', sans-serif;
+  }
+</style>
+<title>CS 184/284A Cloth Sim</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+</head>
+
+
+<body>
+
+<h1 align="middle">CS 184/284A: Computer Graphics and Imaging, Spring 2024</h1>
+<h1 align="middle">Homework 4: Cloth Sim</h1>
+<h2 align="middle">Aishik Bhattacharyya</h2>
+
+<br><br>
+
+<div>
+
+<h2 align="middle">Overview</h2>
+	
+In this project, I created my own rasterizer with various sampling methods and analyzed its efficacy in the context of every method. I was able to understand why some techniques are better from different perspectives like memory and speed. It was also really cool to zoom into the images and play around with different methods and see, in real time, the stark differences.
+
+<h2 align="middle">Part I: Masses and Springs</h2>
+
+In this part, we build a grid of point masses and springs. Both grids should be the given width and height points in row-column form. This means, we loop over the width inside looping over the height and do our calculations there. First, let’s go over adding the masses. We need to check whether this point is in the cloth’s pinned vector, which means the point does not move in the simulation. We do this by looping over the pinned vector and checking if any vector has indices equal to our current coordinates. If there is, then we take note of that with a boolean. Then, depending on whether the orientation of the mesh is horizontal or vertical, we use emplace_back to push the point mass to our list of point masses. In both cases, we multiply the x coordinate by the total width divided by the number of width points. If the orientation is horizontal, we set the y to be 1 and the z coordinate to be the product of the y coordinate by the total height divided by the number of height points. If the orientation is vertical, the previous z coordinate becomes the y coordinate and the new z coordinate becomes a random value between -0.001 and 0.001. To add to the springs, we follow the same looping steps, retrieve the current point mass, and do bounds checking to place the structural, shearing, and bending constraints according to the locations in the spec.
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="mesh1.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">View 1 of cloth wireframe.</figcaption>
+      </td>
+      <td>
+        <img src="mesh2.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">View 2 of cloth wireframe.</figcaption>
+      </td>
+    </tr>
+    <br>
+    <tr>
+      <td>
+        <img src="noshearing.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">No shearing constraints.</figcaption>
+      </td>
+      <td>
+        <img src="onlyshearing.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Only shearing constraints.</figcaption>
+      </td>
+      <td>
+        <img src="everything.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">All constraints.</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+
+<h3 align="middle">Part 2: Antialiasing triangles</h3>
+
+  As we saw in Part 1, when we implement simple rasterization, we can get jagged edges such that they are not smooth and very pixelated. Supersampling is a very useful tool because we examine multiple samples for each pixel, thus being able to provide more information about the image. This is particularly important on the edges of the triangle, where there isn’t just one color dominating the area. After implementing supersampling, we should not expect such a jagged edge, but rather some lighter colored pixels that smooth out the border.  
+My supersampling algorithm first made sure to modify the resize the buffers by the sample rate. Previously, we were just filling in a color for each pixel so simply having the size of product width and height was enough. Now, we want to collect more data per point, which is the sample rate. As for modifying the Task 1 rasterization algorithm, I looped through two nested loops of size square root of the sample rate inside the two nested loops that loops over each bounding box of triangles. I modified the current point we are iterating over by adding the fraction of how much of the squared root sample rate we’ve iterated over. Using the same normal vectors we did in the previous task, we take the dot product of the line vector from this point to each input point and its normal vector. If all three dot products are greater than or equal to zero, that means this point is in the triangle. This is very similar to Task 1. However, a key difference here is that we no longer directly fill the pixel with a color, but add this color information to the sample buffer. When resolving to the frame buffer, I pulled the resulting colors from the buffer for each point, summed their RGB values, and averaged it to choose the final color for that pixel. For filling the pixel, I used the code from the spec to fill in pixel color if the point is on screen.
+
+  <div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="image21.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Sample rate 1 for test 4</figcaption>
+      </td>
+      <td>
+        <img src="image22.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Sample rate 2 for test 4.</figcaption>
+      </td>
+    </tr>
+    <br>
+    <tr>
+      <td>
+        <img src="image23.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Sample rate 3 for test4.</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+  We are looking at the left corner of the red triangle. When the sample rate is equal to 1, only 1 sample is not enough to account for the abrupt decreasing color distribution from a sea of red. But, when we increase the sample rate to 4, we see the missing pixels now a light shade of red and better shows the picture. Yet, it isn’t “great.” In the lowest row, we see a row of pixels hanging on to the triangle by its right corner. This is not smooth and shows that even a sample of 4 isn’t enough. This part of the image is so sharp that only on the 16 samples version are all the images more connected, demonstrating that the more we sample, the better distribution of colors we get connecting all the pixels together because the algorithm has more information regarding its surroundings to fill in each pixel.
+
+<h3 align="middle">Part 3: Transforms</h3>
+
+  I modified my cubeman to be jumping in the air with his legs up and hands pointing upwards. To move the legs up in the air I rotate the bottom half of his legs. And to show the hands pointing up, I scaled the quadrilateral and rotated, as well as rotating the upper half of the hand. One of the legs overlaps with the other legs and I thought this was cool because you usually don’t see both legs in real life when you jump in the air like this.
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="image3.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Jumping cubeman</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<h2 align="middle">Section II: Sampling</h2>
+
+<h3 align="middle">Part 4: Barycentric coordinates</h3>
+
+  Barycentric coordinates are a way we use to plot points within a triangle. The goal of the equation is to find three constant coefficients representing the weights, or pull, each input point has on the current point. All weights must add to 1. This helps us color in the triangle more complexly because the shade of color being used is no longer a constant and varies throughout the triangle. For our implementation, we use the code from Task 2 and add modifications. In order to find the barycentric coordinates, we want to solve a system. So we take the inverse of a matrix containing information on the x, y, and z coordination of the 3 input points. Then we follow the code from Task 2 to check whether or not the point is within the triangle. If it is, we calculate the barycentric coordinates by multiplying the inverse matrix with the point we’re on. We then take each coordinate and multiply it by the color of each point that was passed in.
+  Let’s look at the bottom left corner of the triangle below. That corner is blue. So any point in that area of the triangle has a larger weight of that point, also giving it a larger weight of that point’s color, thus making it more and more blue as you go closer to it. The same logic applies at the other points. Now, in the middle, when it is equidistant from all three points, there is no longer one defining color, but rather a light mesh of all three colors.
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="image41.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Example triangle</figcaption>
+      </td>
+      <td>
+        <img src="image42.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Color wheel</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
+
+	Pixel sampling is a process used to get the final color for each pixel within an image. We take the work from the previous task and add on to that. To perform texture mapping, you create two new Vector2D objects that contain the passed in texture variables. We take how we calculated barycentric weights in the previous problem and multiply that by our u and v vectors. We take this vector and pass it into one of the sampling methods. 
+  Sample nearest works by scaling the texture coordinates by height and width, then rounding the coordinates and getting the texel value. In other words, we get the color that’s closest to the pixel. Sample bilinear works by doing the same procedure but on the four closest texels and lerping the resulting colors. We get the texel of the bottom left, bottom right, top left, and top right and horizontally lerp the to get the top and bottom and finally vertically lerp those two to get the final color.
+  Below we compare nearest sampling with bilinear sampling for a sample rate of 1 and 16 for each. The top row shows that with a sample rate of 1, bilinear sampling outperforms nearest sampling. On the left, the colors are more stark and sharp--it has not done such a great job at taking into consideration colors around it. Even when we increase to a sample rate of 16, both images do significantly improve and the quality difference between the two also significantly decreases, bilinear sampling outperforms nearest sampling by still having a smoother blend of pixel colors. So we can see that there is a large difference between the two methods when there’s a stark contrast in colors with a low sample rate.
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="image51.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Nearest sampling with sample rate=1</figcaption>
+      </td>
+      <td>
+        <img src="image52.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Bilinear sampling with sample rate=1</figcaption>
+      </td>
+    </tr>
+    <br>
+    <tr>
+      <td>
+        <img src="image53.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Nearest sampling with sample rate=1</figcaption>
+      </td>
+      <td>
+        <img src="image54.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Bilinear sampling with sample rate=16</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<h3 align="middle">Part 6: "Level sampling" with mipmaps for texture mapping</h3>
+
+Level sampling is the process in which we use mipmapping levels in texture mapping to determine which texel we get. This takes advantage of computing information that is closer with detail and not so much for stuff that’s less relevant, or further. In order to get level, we calculate the log base 2 of the square root of the norms of du and dv with respect to x and y. To obtain these values, we take the inverse system logic from earlier and calculate dx and dy values by adding one to the x and y parameters in different steps and taking the dot product. Finally, we take these new values and dot product them by the u and v vectors that were inputted and subtract them to get the final du/dx, dv/dx, du/dy, dv/dy values.
+With regards to speed, pixel sampling is the fastest of the three. By only looking at one point and assigning a color, there is not much work involved. With regards to level sampling and number of samples per level, level sampling is faster because it does not need to look at multiple samples per pixel. With regards to memory usage, once, again, pixel sampling uses the least memory because you just need to store the point and color info. Level sampling has second most memory usage and number of samples per pixel is third because you begin to store more texture information and sample more points per pixel leading to storing significantly more info. With regards to antialiasing power, the number of samples per pixel provides the best results because of how it captures more samples per pixel, such as near edges, then it is level sampling, and finally pixel sampling is last because it is very basic. In conclusion, the number of samples per pixel takes more space and time, but gives us better results.
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="image61.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">L_ZERO and P_NEAREST.</figcaption>
+      </td>
+      <td>
+        <img src="image62.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">L_ZERO and P_LINEAR</figcaption>
+      </td>
+    </tr>
+    <br>
+    <tr>
+      <td>
+        <img src="image63.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">L_NEAREST and P_NEAREST</figcaption>
+      </td>
+      <td>
+        <img src="image64.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">L_NEAREST and P_LINEAR</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+</body>
 </html>

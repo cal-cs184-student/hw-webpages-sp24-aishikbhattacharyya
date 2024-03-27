@@ -70,34 +70,28 @@ In this part, we build a grid of point masses and springs. Both grids should be 
 </div>
 
 
-<h3 align="middle">Part 2: Antialiasing triangles</h3>
+<h2 align="middle">Part II: Simulation via numerical integration</h3>
 
-  As we saw in Part 1, when we implement simple rasterization, we can get jagged edges such that they are not smooth and very pixelated. Supersampling is a very useful tool because we examine multiple samples for each pixel, thus being able to provide more information about the image. This is particularly important on the edges of the triangle, where there isn’t just one color dominating the area. After implementing supersampling, we should not expect such a jagged edge, but rather some lighter colored pixels that smooth out the border.  
-My supersampling algorithm first made sure to modify the resize the buffers by the sample rate. Previously, we were just filling in a color for each pixel so simply having the size of product width and height was enough. Now, we want to collect more data per point, which is the sample rate. As for modifying the Task 1 rasterization algorithm, I looped through two nested loops of size square root of the sample rate inside the two nested loops that loops over each bounding box of triangles. I modified the current point we are iterating over by adding the fraction of how much of the squared root sample rate we’ve iterated over. Using the same normal vectors we did in the previous task, we take the dot product of the line vector from this point to each input point and its normal vector. If all three dot products are greater than or equal to zero, that means this point is in the triangle. This is very similar to Task 1. However, a key difference here is that we no longer directly fill the pixel with a color, but add this color information to the sample buffer. When resolving to the frame buffer, I pulled the resulting colors from the buffer for each point, summed their RGB values, and averaged it to choose the final color for that pixel. For filling the pixel, I used the code from the spec to fill in pixel color if the point is on screen.
+For changing the spring constant ks, we get a cloth that is more firm and controlled. When the ks is low, the cloth comes down and takes a while to fully rest. As seen in the picture, due to it being less firm, the cloth droops. With a very high ks, the cloth comes down at the same rate but rests significantly quicker because it is firm and does not droop down. The upper edge is straight and does not curve down.
 
-  <div align="middle">
+<div align="middle">
   <table style="width=100%">
     <tr>
       <td>
-        <img src="image21.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">Sample rate 1 for test 4</figcaption>
+        <img src="500spring.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">pinned2.json - 500ks</figcaption>
       </td>
       <td>
-        <img src="image22.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">Sample rate 2 for test 4.</figcaption>
+        <img src="5000spring.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">pinned2.json - 5000ks</figcaption>
       </td>
-    </tr>
-    <br>
-    <tr>
       <td>
-        <img src="image23.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">Sample rate 3 for test4.</figcaption>
+        <img src="50000spring.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">pinned2.json - 50000ks</figcaption>
       </td>
     </tr>
   </table>
 </div>
-
-  We are looking at the left corner of the red triangle. When the sample rate is equal to 1, only 1 sample is not enough to account for the abrupt decreasing color distribution from a sea of red. But, when we increase the sample rate to 4, we see the missing pixels now a light shade of red and better shows the picture. Yet, it isn’t “great.” In the lowest row, we see a row of pixels hanging on to the triangle by its right corner. This is not smooth and shows that even a sample of 4 isn’t enough. This part of the image is so sharp that only on the 16 samples version are all the images more connected, demonstrating that the more we sample, the better distribution of colors we get connecting all the pixels together because the algorithm has more information regarding its surroundings to fill in each pixel.
 
 <h3 align="middle">Part 3: Transforms</h3>
 

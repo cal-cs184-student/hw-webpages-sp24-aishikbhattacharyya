@@ -113,6 +113,27 @@ Changing the density yields very similar results to change the spring constant. 
     </tr>
   </table>
 </div>
+
+Damping turned out to have unique results in which its effect can’t be seen in the final result, but rather in the process. A very low damping rate of ~0.05%, for example, leads to a very quick fall rate of the cloth and it sways back and forth until it finally settles. Another way of describing it is if gravity became more of a nonfactor and the cloth would just oscillate. For a larger damping rate of ~0.67%, the cloth takes much longer to settle and when it does, it does not oscillate back as much. It feels as if something is really weighing it down. Also, when it falls, it’s very smooth, unlike when there’s a lower damping rate, where it looks like there’s some wrinkle effect.
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="falling05.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">pinned2.json - Cloth falling with 0.05% damping</figcaption>
+      </td>
+      <td>
+        <img src="backwards05.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">pinned2.json - Cloth swaying back with 0.05% damping</figcaption>
+      </td>
+      <td>
+        <img src="falling67.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">pinned2.json - Cloth falling with 0.67% damping</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
 	
 <h3 align="middle">Part 3: Transforms</h3>
 

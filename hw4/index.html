@@ -150,8 +150,10 @@ This is pinned4.json in its final resting state with default parameters.
 	
 <h2 align="middle">Part III: Handling collisions with other objects</h3>
 
-  I modified my cubeman to be jumping in the air with his legs up and hands pointing upwards. To move the legs up in the air I rotate the bottom half of his legs. And to show the hands pointing up, I scaled the quadrilateral and rotated, as well as rotating the upper half of the hand. One of the legs overlaps with the other legs and I thought this was cool because you usually don’t see both legs in real life when you jump in the air like this.
+As the spring ks value increases, the more firm the cloth becomes, so the quicker it takes to settle on the sphere. When the spring constant is 500, the cloth droops down more and keeps doing so, ultimately taking a while to completely settle. It also fully wraps the sphere before going down. When the spring constant is 5000, the cloth does not droop down nearly as much and also does not wrap around the sphere fully either. However, when comparing it to the example where the spring constant is 50000, the end of the cloth at the bottom does not curve in, but rather hangs out since it's more firm.
 
+<br>
+As the spring ks value increases, the more firm the cloth becomes, so the quicker it takes to settle on the sphere. When the spring constant is 500, the cloth droops down more and keeps doing so, ultimately taking a while to completely settle. It also fully wraps the sphere before going down. When the spring constant is 5000, the cloth does not droop down nearly as much and also does not wrap around the sphere fully either. However, when comparing it to the example where the spring constant is 50000, the end of the cloth at the bottom does not curve in, but rather hangs out since it's more firm.
 <div align="middle">
   <table style="width=100%">
     <tr>

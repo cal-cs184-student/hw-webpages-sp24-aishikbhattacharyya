@@ -303,37 +303,5 @@ Blinn-Phong shading is a method used to render all the possible ways light can i
 </div>
 
 
-
-
-<h3 align="middle">Part 6: "Level sampling" with mipmaps for texture mapping</h3>
-
-Level sampling is the process in which we use mipmapping levels in texture mapping to determine which texel we get. This takes advantage of computing information that is closer with detail and not so much for stuff that’s less relevant, or further. In order to get level, we calculate the log base 2 of the square root of the norms of du and dv with respect to x and y. To obtain these values, we take the inverse system logic from earlier and calculate dx and dy values by adding one to the x and y parameters in different steps and taking the dot product. Finally, we take these new values and dot product them by the u and v vectors that were inputted and subtract them to get the final du/dx, dv/dx, du/dy, dv/dy values.
-With regards to speed, pixel sampling is the fastest of the three. By only looking at one point and assigning a color, there is not much work involved. With regards to level sampling and number of samples per level, level sampling is faster because it does not need to look at multiple samples per pixel. With regards to memory usage, once, again, pixel sampling uses the least memory because you just need to store the point and color info. Level sampling has second most memory usage and number of samples per pixel is third because you begin to store more texture information and sample more points per pixel leading to storing significantly more info. With regards to antialiasing power, the number of samples per pixel provides the best results because of how it captures more samples per pixel, such as near edges, then it is level sampling, and finally pixel sampling is last because it is very basic. In conclusion, the number of samples per pixel takes more space and time, but gives us better results.
-
-<div align="middle">
-  <table style="width=100%">
-    <tr>
-      <td>
-        <img src="image61.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">L_ZERO and P_NEAREST.</figcaption>
-      </td>
-      <td>
-        <img src="image62.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">L_ZERO and P_LINEAR</figcaption>
-      </td>
-    </tr>
-    <br>
-    <tr>
-      <td>
-        <img src="image63.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">L_NEAREST and P_NEAREST</figcaption>
-      </td>
-      <td>
-        <img src="image64.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">L_NEAREST and P_LINEAR</figcaption>
-      </td>
-    </tr>
-  </table>
-</div>
 </body>
 </html>

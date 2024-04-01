@@ -152,8 +152,6 @@ This is pinned4.json in its final resting state with default parameters.
 
 As the spring ks value increases, the more firm the cloth becomes, so the quicker it takes to settle on the sphere. When the spring constant is 500, the cloth droops down more and keeps doing so, ultimately taking a while to completely settle. It also fully wraps the sphere before going down. When the spring constant is 5000, the cloth does not droop down nearly as much and also does not wrap around the sphere fully either. However, when comparing it to the example where the spring constant is 50000, the end of the cloth at the bottom does not curve in, but rather hangs out since it's more firm.
 
-<br>
-As the spring ks value increases, the more firm the cloth becomes, so the quicker it takes to settle on the sphere. When the spring constant is 500, the cloth droops down more and keeps doing so, ultimately taking a while to completely settle. It also fully wraps the sphere before going down. When the spring constant is 5000, the cloth does not droop down nearly as much and also does not wrap around the sphere fully either. However, when comparing it to the example where the spring constant is 50000, the end of the cloth at the bottom does not curve in, but rather hangs out since it's more firm.
 <div align="middle">
   <table style="width=100%">
     <tr>
@@ -186,27 +184,51 @@ As the spring ks value increases, the more firm the cloth becomes, so the quicke
 
 
 
-<h2 align="middle">Section II: Sampling</h2>
-
-<h3 align="middle">Part 4: Barycentric coordinates</h3>
-
-  Barycentric coordinates are a way we use to plot points within a triangle. The goal of the equation is to find three constant coefficients representing the weights, or pull, each input point has on the current point. All weights must add to 1. This helps us color in the triangle more complexly because the shade of color being used is no longer a constant and varies throughout the triangle. For our implementation, we use the code from Task 2 and add modifications. In order to find the barycentric coordinates, we want to solve a system. So we take the inverse of a matrix containing information on the x, y, and z coordination of the 3 input points. Then we follow the code from Task 2 to check whether or not the point is within the triangle. If it is, we calculate the barycentric coordinates by multiplying the inverse matrix with the point we’re on. We then take each coordinate and multiply it by the color of each point that was passed in.
-  Let’s look at the bottom left corner of the triangle below. That corner is blue. So any point in that area of the triangle has a larger weight of that point, also giving it a larger weight of that point’s color, thus making it more and more blue as you go closer to it. The same logic applies at the other points. Now, in the middle, when it is equidistant from all three points, there is no longer one defining color, but rather a light mesh of all three colors.
-
+<h2 align="middle">Part IV: Handling self-collisions</h2>
+	
 <div align="middle">
   <table style="width=100%">
     <tr>
       <td>
-        <img src="image41.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">Example triangle</figcaption>
+        <img src="beginpart4.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Beginning of cloth falling</figcaption>
       </td>
       <td>
-        <img src="image42.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">Color wheel</figcaption>
+        <img src="midpart4.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Cloth falling for a bit</figcaption>
+      </td>
+	<td>
+        <img src="almostpart4.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Cloth almost completely fallen</figcaption>
       </td>
     </tr>
   </table>
 </div>
+
+<br>
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="500kspart4.PNG align="middle" width="400px"/>
+        <figcaption align="middle">ks=500 N/m</figcaption>
+      </td>
+      <td>
+        <img src="50000kspart4.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">ks=50000 N/m</figcaption>
+      </td>
+	<td>
+        <img src="5densitypart4.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">density=5 g/cm^2</figcaption>
+      </td>
+	    <td>
+        <img src="50densitypart4.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">density=50 g/cm^2</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
 
 <h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
 

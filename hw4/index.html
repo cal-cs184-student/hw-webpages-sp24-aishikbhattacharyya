@@ -234,38 +234,27 @@ For a lower ks value, like when it was equal to 500, we can see the cloth sort o
   </table>
 </div>
 
+<h2 align="middle">Part V: Shaders</h3>
 
-<h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
+A shader program in GLSL is a great way to accelerate rendering in a world where classic ray tracing takes a long time to run. Whereas ray tracing was done in the CPU, the GLSL shader programs run on the GPU to speed things up and parallelize work. In the general graphics pipeline, vertex and fragment shaders play a key role. A vertex shader modifies properties of the vertices and transforms the coordinates to position them correctly in 3D such that the fragment shader can operate. The fragment shader, which deals with fragments, or pixels, after rasterization, it interpolates the values received to generate the final values of the scene such as light.
 
-	Pixel sampling is a process used to get the final color for each pixel within an image. We take the work from the previous task and add on to that. To perform texture mapping, you create two new Vector2D objects that contain the passed in texture variables. We take how we calculated barycentric weights in the previous problem and multiply that by our u and v vectors. We take this vector and pass it into one of the sampling methods. 
-  Sample nearest works by scaling the texture coordinates by height and width, then rounding the coordinates and getting the texel value. In other words, we get the color that’s closest to the pixel. Sample bilinear works by doing the same procedure but on the four closest texels and lerping the resulting colors. We get the texel of the bottom left, bottom right, top left, and top right and horizontally lerp the to get the top and bottom and finally vertically lerp those two to get the final color.
-  Below we compare nearest sampling with bilinear sampling for a sample rate of 1 and 16 for each. The top row shows that with a sample rate of 1, bilinear sampling outperforms nearest sampling. On the left, the colors are more stark and sharp--it has not done such a great job at taking into consideration colors around it. Even when we increase to a sample rate of 16, both images do significantly improve and the quality difference between the two also significantly decreases, bilinear sampling outperforms nearest sampling by still having a smoother blend of pixel colors. So we can see that there is a large difference between the two methods when there’s a stark contrast in colors with a low sample rate.
-
+<br> Two images of mirror.
 <div align="middle">
   <table style="width=100%">
     <tr>
       <td>
-        <img src="image51.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">Nearest sampling with sample rate=1</figcaption>
+        <img src="mirror1.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Beginning - not fallen</figcaption>
       </td>
-      <td>
-        <img src="image52.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">Bilinear sampling with sample rate=1</figcaption>
+	<td>
+        <img src="mirror2.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">End - fallen</figcaption>
       </td>
-    </tr>
-    <br>
-    <tr>
-      <td>
-        <img src="image53.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">Nearest sampling with sample rate=1</figcaption>
-      </td>
-      <td>
-        <img src="image54.PNG" align="middle" width="400px"/>
-        <figcaption align="middle">Bilinear sampling with sample rate=16</figcaption>
-      </td>
-    </tr>
   </table>
 </div>
+
+
+
 
 <h3 align="middle">Part 6: "Level sampling" with mipmaps for texture mapping</h3>
 

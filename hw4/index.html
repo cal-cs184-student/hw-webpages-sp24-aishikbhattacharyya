@@ -238,6 +238,34 @@ For a lower ks value, like when it was equal to 500, we can see the cloth sort o
 
 A shader program in GLSL is a great way to accelerate rendering in a world where classic ray tracing takes a long time to run. Whereas ray tracing was done in the CPU, the GLSL shader programs run on the GPU to speed things up and parallelize work. In the general graphics pipeline, vertex and fragment shaders play a key role. A vertex shader modifies properties of the vertices and transforms the coordinates to position them correctly in 3D such that the fragment shader can operate. The fragment shader, which deals with fragments, or pixels, after rasterization, it interpolates the values received to generate the final values of the scene such as light.
 
+<br>
+Blinn-Phong shading is a method used to render all the possible ways light can interact with an object. First, the ambient component is the light reflected uniformly across a scene. Having a large ambient component would mean that the scene is particularly bright. To calculate this part, we note the intensity of ambient light and ambient reflection coefficient. Second, the diffuse component is the light that gets scattered depending on where the light hits the object. To calculate this part, we use the diffuse reflection coefficient, intensity of the light, distance between the light and the surface, the surface normal, and a normalized vector from the light to the surface. Finally, the specular component measures the impact of light on shiny or smooth objects. To calculate this, we use the specular reflection coefficient, intensity of the light, distance between the light and surface, the surface normal, the vector from the camera to the surface, and specular exponent. We apply all of this using the formulas from the spec and combine them to apply this form of shading.
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="ambientonlypart5.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Ambient shading only</figcaption>
+      </td>
+	<td>
+        <img src="diffuseonlypart5.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Diffuse shading only</figcaption>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <img src="specularonlypart5.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">Specular shading only</figcaption>
+      </td>
+	<td>
+        <img src="allphongpart5.PNG" align="middle" width="400px"/>
+        <figcaption align="middle">All shading applied</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+	
 <br> Two images of mirror.
 <div align="middle">
   <table style="width=100%">
@@ -250,6 +278,7 @@ A shader program in GLSL is a great way to accelerate rendering in a world where
         <img src="mirror2.PNG" align="middle" width="400px"/>
         <figcaption align="middle">End - fallen</figcaption>
       </td>
+    </tr>
   </table>
 </div>
 

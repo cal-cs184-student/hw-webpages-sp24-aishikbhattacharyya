@@ -27,13 +27,13 @@
 <h1 align="middle">Homework 4: Cloth Sim</h1>
 <h2 align="middle">Aishik Bhattacharyya</h2>
 
-<br><br>
+<br>
 
 <div>
 
 <h2 align="middle">Overview</h2>
 	
-In this project, I created my own rasterizer with various sampling methods and analyzed its efficacy in the context of every method. I was able to understand why some techniques are better from different perspectives like memory and speed. It was also really cool to zoom into the images and play around with different methods and see, in real time, the stark differences.
+In ClothSim, I developed a simulation that does a good job at rendering a falling cloth. The code handles everything from generating point masses to the algorithms of various shaders. The cloth begins as a set of point masses and springs and are impacted by forces such as gravity that move them around. Calculations are made based on factors such as whether or not the point mass is pinned, or what type of constraints (structural, shearing, bending) is being applied to the point masses. Once all of that is complete, we use mathematical formulas to determine whether the cloth collides with objects such as a sphere, or with itself to properly simulate the cloth impacting an object. Various properties like spring constant and density help alter the cloth’s physical appearance, and thus, how it falls. Finally, shaders accelerate the lighting process and add realistic lighting to the scene. I found the shaders part to be the most fun to implement because you can play around with different properties and see how the cloth shines, or how its texture differs.
 
 <h2 align="middle">Part I: Masses and Springs</h2>
 
